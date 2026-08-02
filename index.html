@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OPERAÇÃO DATAPREV // Cargo 4</title>
+<meta name="description" content="Painel de missões gamificado para o cronograma de estudos Dataprev 2026 — Cargo 4, Inteligência da Informação.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' fill='%23070a10'/%3E%3Cpath d='M4 18l4-12 4 8 4-8 4 12' stroke='%2300e5ff' stroke-width='2' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<div class="noise-overlay" aria-hidden="true"></div>
+<div class="scan-overlay" aria-hidden="true"></div>
+
+<a class="skip-link" href="#main">Pular para o conteúdo</a>
+
+<!-- ============ HUD HEADER ============ -->
+<header class="hud">
+  <div class="hud-inner">
+    <div class="hud-brand">
+      <span class="hud-tag">CARGO 4 · INTELIGÊNCIA DA INFORMAÇÃO</span>
+      <h1 class="hud-title">OPERAÇÃO<span>DATAPREV</span></h1>
+      <span class="hud-sub">João Pessoa/PB — Edital 2026</span>
+    </div>
+
+    <div class="hud-player" id="hudPlayer">
+      <div class="player-rank">
+        <span class="level-badge" id="levelBadge">LV 1</span>
+        <div class="player-rank-text">
+          <strong id="rankName">Recruta de Dados</strong>
+          <span id="xpLabel">0 / 150 XP</span>
+        </div>
+      </div>
+      <div class="xp-track" role="progressbar" aria-label="Experiência" aria-valuemin="0" aria-valuemax="100" id="xpBarWrap">
+        <div class="xp-fill" id="xpBar"></div>
+      </div>
+    </div>
+
+    <div class="hud-timer">
+      <span class="hud-tag">CONTAGEM REGRESSIVA · BOSS FINAL</span>
+      <div class="timer-digits" id="countdown">
+        <div class="tdigit"><strong id="cdDays">--</strong><small>dias</small></div>
+        <div class="tdigit"><strong id="cdHours">--</strong><small>h</small></div>
+        <div class="tdigit"><strong id="cdMins">--</strong><small>min</small></div>
+        <div class="tdigit"><strong id="cdSecs">--</strong><small>s</small></div>
+      </div>
+      <span class="hud-sub">11/10/2026 · 13h–17h</span>
+    </div>
+  </div>
+
+  <div class="hud-strip">
+    <div class="strip-item">
+      <span>Progresso da campanha</span>
+      <div class="mini-bar"><div class="mini-fill" id="campaignBar"></div></div>
+      <strong id="campaignPct">0%</strong>
+    </div>
+    <div class="strip-item">
+      <span>Missões concluídas</span>
+      <div class="mini-bar"><div class="mini-fill mini-fill--purple" id="questBar"></div></div>
+      <strong id="questPct">0 / 0</strong>
+    </div>
+    <div class="strip-item strip-item--streak">
+      <span>Sequência de estudo</span>
+      <strong id="streakCount">🔥 0 dias</strong>
+    </div>
+    <button class="btn-ghost" id="resetBtn" title="Zerar todo o progresso salvo">↺ Reiniciar save</button>
+    <button class="btn-ghost" id="exportBtn" title="Baixar o progresso em .json">⇩ Exportar</button>
+    <label class="btn-ghost btn-file" title="Carregar um progresso salvo (.json)">
+      ⇧ Importar
+      <input type="file" id="importInput" accept="application/json" hidden>
+    </label>
+  </div>
+</header>
+
+<main id="main">
+
+  <!-- ============ BRIEFING ============ -->
+  <section class="panel briefing" aria-labelledby="briefingTitle">
+    <h2 id="briefingTitle"><span class="idx">BRIEFING</span> Parâmetros da prova</h2>
+    <div class="briefing-grid">
+      <div class="stat-card">
+        <span class="stat-label">Estrutura</span>
+        <strong>70 questões</strong>
+        <span class="stat-note">5 alternativas cada</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-label">Módulo I — Gerais</span>
+        <strong>40 questões</strong>
+        <span class="stat-note">peso 1 · máx. 40 pts</span>
+      </div>
+      <div class="stat-card stat-card--accent">
+        <span class="stat-label">Módulo II — Específicos</span>
+        <strong>30 questões</strong>
+        <span class="stat-note">peso 2,5 · máx. 75 pts</span>
+      </div>
+      <div class="stat-card stat-card--danger">
+        <span class="stat-label">Nota mínima para sobreviver</span>
+        <strong>57,5 / 115</strong>
+        <span class="stat-note">e nenhuma disciplina zerada</span>
+      </div>
+    </div>
+    <p class="briefing-note">Cada questão específica vale 2,5x mais — o Módulo II decide a prova. Mas <strong>Português + Inglês são 24 das 40 questões gerais</strong> do Módulo I: zerar qualquer classe geral elimina o personagem, não importa a pontuação total.</p>
+
+    <div class="strategy-alert">
+      <strong>⚠️ Ajuste estratégico ativo — confirme antes de confiar 100%</strong>
+      <p>Álgebra linear, vetores/matrizes, derivada, integral e cálculo foram <strong>cortados</strong> do cronograma. O foco pesado agora é Estatística, Probabilidade, Ciência de Dados, Machine Learning e Banco de Dados. Isso parte da leitura de que a regra "não zerar disciplina" trata <strong>Conhecimentos Específicos como um bloco único de 30 questões</strong>, não cada subtema (Matemática, Estatística, Ciência de Dados, Linguagens, BD) separadamente — é o que sugerem várias coberturas do edital 2026, mas o texto literal do critério de avaliação do Cargo 4 não foi conferido linha a linha. <strong>Confira isso no edital oficial</strong> antes de eliminar matemática pesada de vez. Por segurança, ficou 1 missão mínima de "matemática básica sem cálculo" na Semana 8 — uma rede de segurança barata.</p>
+    </div>
+  </section>
+
+  <!-- ============ CLASSES / DISCIPLINAS ============ -->
+  <section class="panel classes" aria-labelledby="classesTitle">
+    <h2 id="classesTitle"><span class="idx">STATUS</span> Árvore de classes</h2>
+    <div class="classes-grid">
+      <div class="class-group">
+        <h3>Módulo I <span>· classes gerais · peso 1</span></h3>
+        <div class="bars" id="barsModuleI"></div>
+      </div>
+      <div class="class-group">
+        <h3>Módulo II <span>· classes especialistas · peso 2,5</span></h3>
+        <div class="bars" id="barsModuleII"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ WORLD MAP ============ -->
+  <section class="panel worldmap" aria-labelledby="mapTitle">
+    <h2 id="mapTitle"><span class="idx">MAPA</span> Trilha de missões — 10 semanas</h2>
+    <p class="section-hint">Toque em um nó para abrir o log de missões daquela semana. O anel ao redor mostra o quanto da semana já foi concluído.</p>
+    <div class="map-path" id="mapPath"></div>
+  </section>
+
+  <!-- ============ RULES ============ -->
+  <section class="panel rules" aria-labelledby="rulesTitle">
+    <h2 id="rulesTitle"><span class="idx">REGRAS</span> Regras de ouro (buffs permanentes)</h2>
+    <ul class="rules-list" id="rulesList"></ul>
+  </section>
+
+  <!-- ============ TOOLKIT ============ -->
+  <section class="panel toolkit" aria-labelledby="toolkitTitle">
+    <h2 id="toolkitTitle"><span class="idx">INVENTÁRIO</span> Kit QConcursos</h2>
+    <ul class="toolkit-list" id="toolkitList"></ul>
+  </section>
+
+  <!-- ============ DAILY ROUTINE REFERENCE ============ -->
+  <section class="panel routine" aria-labelledby="routineTitle">
+    <h2 id="routineTitle"><span class="idx">ROTINA</span> Ciclo de combate diário (Pomodoro 50/10)</h2>
+    <div class="routine-grid">
+      <div class="routine-card">
+        <h3>Dia de semana · 19h–22h</h3>
+        <ol>
+          <li><strong>19:00–19:50</strong> Bloco 1 — Teoria do tema do dia</li>
+          <li><strong>19:50–20:00</strong> Pausa</li>
+          <li><strong>20:00–20:50</strong> Bloco 2 — Questões do mesmo tema</li>
+          <li><strong>20:50–21:00</strong> Pausa</li>
+          <li><strong>21:00–21:50</strong> Bloco 3 — Português (seg/qua/sex) ou Inglês (ter/qui) + 10min Raciocínio</li>
+          <li><strong>21:50–22:00</strong> Registrar erros no caderno</li>
+        </ol>
+      </div>
+      <div class="routine-card">
+        <h3>Fim de semana · 6h/dia</h3>
+        <ol>
+          <li><strong>08:00–11:10</strong> 3 blocos — tema mais pesado da semana</li>
+          <li><strong>11:10–14:00</strong> Almoço / descanso longo</li>
+          <li><strong>14:00–17:10</strong> 3 blocos — questões, revisão de erros ou simulado parcial</li>
+        </ol>
+        <p class="routine-tip">A cada 4 blocos seguidos: pausa longa de 20–30min. Evita a queda de rendimento após ~3h contínuas.</p>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="site-footer">
+  <p>Progresso salvo automaticamente neste navegador (localStorage). Nenhum dado sai do seu dispositivo.</p>
+  <p class="site-footer-sub">Baseado no cronograma de estudos Dataprev 2026 — Cargo 4 · Inteligência da Informação.</p>
+</footer>
+
+<!-- ============ QUEST PANEL (drawer) ============ -->
+<div class="drawer-backdrop" id="drawerBackdrop"></div>
+<aside class="quest-drawer" id="questDrawer" aria-hidden="true">
+  <div class="drawer-head">
+    <div>
+      <span class="drawer-eyebrow" id="drawerEyebrow">SEMANA 1</span>
+      <h2 id="drawerTitle">Título da missão</h2>
+      <span class="drawer-dates" id="drawerDates">03–09/08</span>
+    </div>
+    <button class="drawer-close" id="drawerClose" aria-label="Fechar painel de missão">✕</button>
+  </div>
+  <div class="drawer-meta">
+    <span class="chip" id="drawerProportion">70/30</span>
+    <span class="drawer-progress-text"><strong id="drawerProgressCount">0/0</strong> concluídas</span>
+  </div>
+  <div class="mini-bar drawer-progress-bar"><div class="mini-fill" id="drawerProgressFill"></div></div>
+  <p class="drawer-focus" id="drawerFocus"></p>
+  <ul class="quest-list" id="drawerTasks"></ul>
+</aside>
+
+<div class="toast" id="xpToast" aria-live="polite"></div>
+
+<script src="js/app.js"></script>
+</body>
+</html>

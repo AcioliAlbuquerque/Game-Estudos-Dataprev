@@ -1,0 +1,61 @@
+# OPERAÇÃO DATAPREV — Painel de Missões
+
+Painel gamificado (HTML + CSS + JS puro, sem build, sem dependências de backend) para acompanhar o cronograma de estudos do concurso Dataprev 2026 — Cargo 4 (Inteligência da Informação).
+
+Trata o cronograma como uma campanha de RPG: cada semana é um nó no mapa, cada tarefa é uma missão que dá XP, cada disciplina é uma "classe" com barra de progresso própria, e a prova em 11/10 é o chefe final com contagem regressiva ao vivo.
+
+## Stack
+
+- **HTML5** semântico, sem framework
+- **CSS3** puro (custom properties, grid, conic-gradient para os anéis de progresso)
+- **JavaScript** vanilla (ES6+), sem dependências externas
+- **localStorage** para salvar o progresso — nada é enviado para nenhum servidor
+
+## Estrutura
+
+```
+dataprev-quest/
+├── index.html          # estrutura da página
+├── css/
+│   └── style.css       # design system dark/gamer + responsividade
+├── js/
+│   └── app.js          # dados do cronograma + lógica de XP/save
+└── README.md
+```
+
+## Rodando localmente
+
+Não precisa de nenhum passo de build. Basta abrir `index.html` num servidor local (recomendado, para o `fetch` de fontes funcionar bem) — no VS Code, use a extensão **Live Server** e clique em "Go Live", ou rode:
+
+```bash
+npx serve .
+# ou
+python3 -m http.server 8080
+```
+
+## Publicando no GitHub Pages
+
+1. Crie um repositório novo no GitHub (pode ser privado se quiser manter só para uso pessoal).
+2. Suba os arquivos deste projeto para a branch `main`:
+   ```bash
+   git init
+   git add .
+   git commit -m "Painel de missões — Operação Dataprev"
+   git branch -M main
+   git remote add origin https://github.com/SEU-USUARIO/SEU-REPO.git
+   git push -u origin main
+   ```
+3. No GitHub, vá em **Settings → Pages**.
+4. Em "Build and deployment", selecione **Deploy from a branch**, branch `main`, pasta `/ (root)`.
+5. Salve. Em alguns minutos o site estará em `https://SEU-USUARIO.github.io/SEU-REPO/`.
+
+## Personalizando
+
+- **Datas da prova / início da campanha**: no topo de `js/app.js`, ajuste `EXAM_DATE` e `CAMPAIGN_START`.
+- **Missões de cada semana**: edite o array `WEEKS` em `js/app.js` — cada tarefa tem `t` (texto), `tag` (disciplina) e opcionalmente `xp`.
+- **Cores**: todos os tokens de cor estão no `:root` de `css/style.css` (`--cyan`, `--purple`, `--red`, `--green`, `--amber`).
+- **Ranks/títulos por nível**: array `RANKS` em `js/app.js`.
+
+## Progresso e privacidade
+
+Todo o progresso (missões concluídas, sequência de dias, XP) fica salvo apenas no `localStorage` do navegador em que você está usando o painel. Use os botões **Exportar** / **Importar** no cabeçalho para levar o progresso entre navegadores ou dispositivos, ou para ter um backup.
